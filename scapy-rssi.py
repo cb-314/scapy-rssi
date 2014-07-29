@@ -27,7 +27,10 @@ class ScapyRssi:
     thread.start_new_thread(self.sniff, (stopEvent,))
   def sniff(self, stopEvent):
     while not stopEvent.is_set():
+      t0 = time.time()
       packets = sca.sniff(iface=self.interface, count = 100)
+      dt = time.time() - t0
+      print "current rate " + "{0:.2f}".format(100/dt) + " packets/sec"
       for pkt in packets:
         addr, rssi = self.parsePacket(pkt)
         if addr is not None:
