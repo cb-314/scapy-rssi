@@ -38,9 +38,9 @@ class ScapyRssi:
             else:
               self.data[addr] = [rssi]
   def parsePacket(self, pkt):
-    if pkt.haslayer(sca.Dot11) :
-      if pkt.addr2 != None:
-        return pkt.addr2, -(256-ord(pkt.notdecoded[-4:-3]))
+    if pkt.haslayer(sca.Dot11):
+      if pkt.addr2 is not None:
+        return pkt.addr2, ord(pkt.notdecoded[-4:-3])-256
     return None, None
   def plot(self, num):
     plt.clf()
@@ -65,6 +65,6 @@ class ScapyRssi:
 
 if __name__ == "__main__":
   sniffer = ScapyRssi("wlan0")
-  time.sleep(300)
+  time.sleep(30)
   sniffer.plot(20)
   print "plotted"
