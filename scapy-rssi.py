@@ -4,7 +4,6 @@ import thread
 import threading
 import signal
 import sys
-import copy
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
 import math
@@ -52,7 +51,7 @@ class ScapyRssi:
     data = {}
     time1 = time.time()
     with self.dataMutex:
-      data = copy.deepcopy(self.data)
+      data = dict(self.data)
     nodes = [x[0] for x in sorted([(addr, len(data[addr])) for addr in data.keys()], key=lambda x:x[1], reverse=True)]
     nplots = min(len(nodes), num)
     for i in range(nplots):
