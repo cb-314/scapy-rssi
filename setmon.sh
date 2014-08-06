@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ifconfig wlan0 down
-iwconfig wlan0 mode monitor
-ifconfig wlan0 up
-iwconfig wlan0 chan 9
+ifconfig wlan1 down
+iwconfig wlan1 mode monitor
+ifconfig wlan1 up
+iwconfig wlan1 chan 9

@@ -7,6 +7,7 @@ import sys
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
 import math
+import struct
 
 # needed to gracefully exit all threads
 stopEvent = threading.Event() 
@@ -20,6 +21,9 @@ signal.signal(signal.SIGINT, signal_handler)
 
 class ScapyRssi:
   def __init__(self, interface):
+    # Radiotap field specification
+    self.radiotap_formats = {"TSFT":"Q","Flags":"B","Rate":"B","Channel":"HH","FHSS":"BB","dBm_AntSignal":"b","dBm_AntNoise":"b","Lock_Quality":"H","TX_Attenuation":"H","dB_TX_Attenuation":"H","dBm_TX_Power":"b", "Antenna":"B", "dB_AntSignal":"B", "dB_AntNoise":"B","b14":"H", "b15":"B","b16":"B","b17":"B","b18":"B","b19":"BBB","b20":"LHBB","b21":"HBBBBBH","b22":"B","b23":"B","b24":"B","b25":"B","b26":"B","b27":"B","b28":"B","b29":"B","b30":"B","Ext":"B"}
+    # data
     self.data = {}
     self.interface = interface
     self.dataMutex = thread.allocate_lock()
@@ -42,7 +46,24 @@ class ScapyRssi:
   def parsePacket(self, pkt):
     if pkt.haslayer(sca.Dot11):
       if pkt.addr2 is not None:
-        return pkt.addr2, ord(pkt.notdecoded[-4:-3])-256
+        # check available Radiotap fields
+        names = []
+        field, val = pkt.getfield_and_val("present")
+        for i in range(len(field.names)):
+          if (1 << i) & val != 0:
+            names.append(field.names[i][0])
+        # check if we measured signal strength
+        if "dBm_AntSignal" in names:
+          # decode radiotap header
+          fmt = "<"
+          rssipos = 0
+          for name in names:
+            if name == "dBm_AntSignal":
+              rssipos = len(fmt)-1
+            fmt = fmt + self.radiotap_formats[name]
+          decoded = struct.unpack(fmt, pkt.notdecoded)
+          print decoded[rssipos]
+          return pkt.addr2, decoded[rssipos]
     return None, None
   def plot(self, num):
     plt.clf()
