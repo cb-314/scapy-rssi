@@ -69,7 +69,6 @@ class ScapyRssi:
               rssipos = len(fmt)-1
             fmt = fmt + self.radiotap_formats[name]
           decoded = struct.unpack(fmt, pkt.notdecoded)
-          print decoded[rssipos]
           return pkt.addr2, decoded[rssipos]
     return None, None
   def plot(self, num):
