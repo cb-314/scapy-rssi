@@ -22,7 +22,14 @@ signal.signal(signal.SIGINT, signal_handler)
 class ScapyRssi:
   def __init__(self, interface):
     # Radiotap field specification
-    self.radiotap_formats = {"TSFT":"Q","Flags":"B","Rate":"B","Channel":"HH","FHSS":"BB","dBm_AntSignal":"b","dBm_AntNoise":"b","Lock_Quality":"H","TX_Attenuation":"H","dB_TX_Attenuation":"H","dBm_TX_Power":"b", "Antenna":"B", "dB_AntSignal":"B", "dB_AntNoise":"B","b14":"H", "b15":"B","b16":"B","b17":"B","b18":"B","b19":"BBB","b20":"LHBB","b21":"HBBBBBH","b22":"B","b23":"B","b24":"B","b25":"B","b26":"B","b27":"B","b28":"B","b29":"B","b30":"B","Ext":"B"}
+    self.radiotap_formats = {"TSFT":"Q", "Flags":"B", "Rate":"B",
+      "Channel":"HH", "FHSS":"BB", "dBm_AntSignal":"b", "dBm_AntNoise":"b",
+      "Lock_Quality":"H", "TX_Attenuation":"H", "dB_TX_Attenuation":"H",
+      "dBm_TX_Power":"b", "Antenna":"B",  "dB_AntSignal":"B",
+      "dB_AntNoise":"B", "b14":"H", "b15":"B", "b16":"B", "b17":"B", "b18":"B",
+      "b19":"BBB", "b20":"LHBB", "b21":"HBBBBBH", "b22":"B", "b23":"B",
+      "b24":"B", "b25":"B", "b26":"B", "b27":"B", "b28":"B", "b29":"B",
+      "b30":"B", "Ext":"B"}
     # data
     self.data = {}
     self.interface = interface
@@ -80,7 +87,10 @@ class ScapyRssi:
     nplots = min(len(nodes), num)
     for i in range(nplots):
       plt.subplot(nplots, 1, i+1)
-      plt.title(str(nodes[i]) + ": " + str(len(data[nodes[i]])) + " packets @ " + "{0:.2f}".format(len(data[nodes[i]])/(time1-self.time0)) + " packets/sec")
+      plt.title(str(nodes[i]) + ": " 
+        + str(len(data[nodes[i]])) + " packets @ " +
+        "{0:.2f}".format(len(data[nodes[i]])/(time1-self.time0)) 
+        + " packets/sec")
       plt.hist(data[nodes[i]], range=(-100, -20), bins=80)
       plt.gca().set_xlim((-100, -20))
     plt.gcf().set_size_inches((6, 4*nplots))
