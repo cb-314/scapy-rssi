@@ -6,7 +6,6 @@ import signal
 import sys
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
-import math
 import struct
 
 # needed to gracefully exit all threads
