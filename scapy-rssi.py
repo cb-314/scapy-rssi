@@ -54,18 +54,17 @@ class ScapyRssi:
     if pkt.haslayer(sca.Dot11):
       if pkt.addr2 is not None:
         # check available Radiotap fields
-        names = []
         field, val = pkt.getfield_and_val("present")
-        for i in range(len(field.names)):
-          if (1 << i) & val != 0:
-            names.append(field.names[i][0])
+        names = [field.names[i][0] for i in range(len(field.names)) if (1 << i) & val != 0]
         # check if we measured signal strength
         if "dBm_AntSignal" in names:
           # decode radiotap header
           fmt = "<"
           rssipos = 0
           for name in names:
+            # some fields consist of more than one value
             if name == "dBm_AntSignal":
+              # correct for little endian format sign
               rssipos = len(fmt)-1
             fmt = fmt + self.radiotap_formats[name]
           # unfortunately not all platforms work equally well and on my arm
