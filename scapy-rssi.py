@@ -68,7 +68,10 @@ class ScapyRssi:
             if name == "dBm_AntSignal":
               rssipos = len(fmt)-1
             fmt = fmt + self.radiotap_formats[name]
-          decoded = struct.unpack(fmt, pkt.notdecoded)
+          # unfortunately not all platforms work equally well and on my arm
+          # platform notdecoded was padded with a ton of zeros without
+          # indicating more fields in pkt.len and/or padding in pkt.pad
+          decoded = struct.unpack(fmt, pkt.notdecoded[:struct.calcsize(fmt)])
           return pkt.addr2, decoded[rssipos]
     return None, None
   def plot(self, num):
